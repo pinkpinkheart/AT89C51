@@ -1,0 +1,127 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              12/16/2017 20:13:40 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: d:\Keil_v5\C51\BIN\C51.EXE ..\User\main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\User) DEBUG OBJECTEXTE
+                    -ND PRINT(..\Listing\main.lst) TABS(8) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          //定时器控制灯泡闪烁1hz，外部中断控制亮灭
+   2          #include <reg51.h>
+   3          #define u8 unsigned char
+   4          sbit led =P2^0 ;
+   5          sbit key =P3^2 ;
+   6          void delay (u8 t);
+   7          u8 InterruptCount=0;
+   8          int main()
+   9          {
+  10   1              led = 1;
+  11   1              IE=0X9F;     //打开总中断
+  12   1              IT0 = 1;    //跳变沿触发中断
+  13   1              TCON = 0x02;    //8位自动重装载
+  14   1              TH0 = 0x0b;
+  15   1              TL0 = 0xdc;     //中断时间1s
+  16   1              TR0 = 1;
+  17   1              while(1)
+  18   1              {
+  19   2                      
+  20   2              }
+  21   1      }
+  22          void INT0_Handler() interrupt 0
+  23          {
+  24   1              TR0 = 0;
+  25   1              led = 0;
+  26   1      }
+  27          
+  28          
+  29          void TIM0_Handler() interrupt 1
+  30          {
+  31   1              InterruptCount++;
+  32   1              if(InterruptCount >= 16)
+  33   1              {
+  34   2                      InterruptCount = 0;
+  35   2                      led = ~led;
+  36   2              }
+  37   1      }
+  38          
+  39          
+  40          
+  41          
+  42          
+  43          
+  44          
+  45          
+  46          
+  47          
+  48          
+  49          
+  50          
+  51          //#include <reg51.h>
+  52          //#define u8 unsigned char
+  53          //sbit led =P2^0 ;
+  54          //sbit key =P3^2 ;
+C51 COMPILER V9.56.0.0   MAIN                                                              12/16/2017 20:13:40 PAGE 2   
+
+  55          //void delay (u8 t);
+  56          //void Key_Control();
+  57          //u8 Key_Scan();
+  58          //int main()
+  59          //{
+  60          //        
+  61          //}
+  62          //void delay (u8 t)           //延时函数
+  63          //{
+  64          //        u8 i;
+  65          //        for(i=1000;i>0;i--)
+  66          //        {
+  67          //                for(;t>0;t--);
+  68          //        }
+  69          //}
+  70          //u8 Key_Scan()                             //1亮，0灭
+  71          //{
+  72          //        u8 KeyValue = 0;
+  73          //        u8 i;
+  74          //        i=0;
+  75          //        if(0 == key)
+  76          //        {
+  77          //                delay(1);
+  78          //                if(0 == key)
+  79          //                {
+  80          //                        KeyValue = ~ KeyValue;
+  81          //                        while((i < 20) && (P2 != 0xff))
+  82          //                        {
+  83          //                        delay(1);
+  84          //                        i++;
+  85          //                        }
+  86          //                }
+  87          //        }
+  88          //        return KeyValue;
+  89          //}
+  90          //void Key_Control(u8 t)
+  91          //{
+  92          //        if(0==t)
+  93          //        {
+  94          //                led=0;
+  95          //        }
+  96          //        else led=1;
+  97          //}
+  98          //void INT0_Handler() interrupt 0
+  99          //{
+ 100          //        Key_Control(Key_Scan());
+ 101          //}
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     48    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

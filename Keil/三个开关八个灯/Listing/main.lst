@@ -1,0 +1,77 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              10/04/2017 09:26:41 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: d:\Keil_v5\C51\BIN\C51.EXE ..\User\main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\User) DEBUG OBJECTEXTE
+                    -ND PRINT(..\Listing\main.lst) TABS(8) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          void delay(unsigned int t)//延时
+   3          {
+   4   1        for(;t>0;t--);
+   5   1      }
+   6          unsigned char flickerflag=0;
+   7          
+   8          unsigned char ledvalue=0xfe;
+   9          unsigned char keyvalue;
+  10          int keyscan(void)//捕获p2的值
+  11          {unsigned char i=0;
+  12   1         keyvalue=0xff;
+  13   1         if(P2!=0xff)
+  14   1              {
+  15   2                      delay(50);
+  16   2                      if(P2!=0xff)
+  17   2                      {
+  18   3                              keyvalue=P2;
+  19   3                              while((i<=100)&&(P2!=0xff))
+  20   3                              {
+  21   4                                      i++;//i=(i=(i+1)))
+  22   4                                      delay(50);
+  23   4                              }
+  24   3                      }
+  25   2              }
+  26   1              return keyvalue;
+  27   1      }
+  28          void keycontrol(unsigned char keyvalue)
+  29          {
+  30   1              switch (keyvalue)
+  31   1              {
+  32   2                      case (0xfe):if(ledvalue!=0xfe) ledvalue=~((~ledvalue)>> 1);break;
+  33   2                      case (0xfd):flickerflag=~flickerflag;break;
+  34   2                      case (0xfb):if(ledvalue!=0x7f) ledvalue=~((~ledvalue)<< 1);break;
+  35   2              }
+  36   1      }
+  37          int main()
+  38          {
+  39   1              while(1)
+  40   1              {
+  41   2                      keycontrol(keyscan());
+  42   2                      P0=ledvalue;
+  43   2                      delay(50);
+  44   2                      if(flickerflag!=0)
+  45   2                      {
+  46   3                              P0=0xff;
+  47   3                              delay(50);
+  48   3                              
+  49   3                      }
+  50   2              }
+  51   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+C51 COMPILER V9.56.0.0   MAIN                                                              10/04/2017 09:26:41 PAGE 2   
+
+   CODE SIZE        =    132    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

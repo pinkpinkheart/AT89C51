@@ -1,0 +1,95 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              11/12/2017 21:10:03 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: d:\Keil_v5\C51\BIN\C51.EXE ..\User\main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\User) DEBUG OBJECTEXTE
+                    -ND PRINT(..\Listing\main.lst) TABS(8) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #define u8 unsigned char
+   3          u8 n;
+   4          
+   5          sbit sele = P1^0;
+   6          sbit button = P1^4;
+   7          sbit led = P1^3;
+   8          
+   9          void delay(int i)
+  10          {
+  11   1              int j;
+  12   1              for(j=100;j>0;j--)
+  13   1              for(;i>0;i--);
+  14   1      }
+  15          
+  16          void init (void)  //config
+  17          {
+  18   1      
+  19   1              TMOD=0x20;      //定时器方式二
+  20   1              TH1=0xfd;
+  21   1              TL1=0xfd;       //八位自动重装载
+  22   1              TR1=1;
+  23   1              EA=1;           //开启总中断
+  24   1              ES=1;           //串口中断
+  25   1              REN=1;          //接收允许
+  26   1              RI=0;           //接收中断
+  27   1              TI=0;           //发出中断
+  28   1              SM0=0;
+  29   1              SM1=1;          //控制方式1   10位异步
+  30   1      }
+  31          int main()
+  32          {
+  33   1              init();
+  34   1              while(1)
+  35   1              {
+  36   2                      if(sele==0)                     //发射机
+  37   2                      {
+  38   3                              if(button==0)
+  39   3                              {
+  40   4                                      delay(1);
+  41   4                                      if(button==0)
+  42   4                                      {
+  43   5                                              while(button==0);
+  44   5                                              SBUF=0xff;
+  45   5                                              n=0xff;
+  46   5                                      }
+  47   4                              }
+  48   3                                      
+  49   3                      }
+  50   2              }
+  51   1      }
+  52          
+  53          void hander() interrupt 4
+  54          {
+C51 COMPILER V9.56.0.0   MAIN                                                              11/12/2017 21:10:03 PAGE 2   
+
+  55   1              u8 recevierdate;
+  56   1              recevierdate=SBUF;
+  57   1              if(RI)
+  58   1              {
+  59   2                      TI=0;
+  60   2                      if(sele==1)
+  61   2                      {
+  62   3                              if(recevierdate==0xff)
+  63   3                              {
+  64   4                                      led=~led;
+  65   4                              }
+  66   3                              RI=0;
+  67   3                      }
+  68   2              }
+  69   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    117    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

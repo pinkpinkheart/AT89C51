@@ -1,0 +1,377 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              10/08/2017 08:46:35 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: d:\Keil_v5\C51\BIN\C51.EXE ..\User\main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\User) DEBUG OBJECTEXTE
+                    -ND PRINT(..\Listing\main.lst) TABS(8) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #define u8 unsigned char
+   3          int a;//初始页面控制
+   4          int i;//松手检测
+   5          int m;//闪烁循环
+   6          int z;//控制闪烁
+   7          int v;//调整时间
+   8          int y=0;//一秒钟
+   9          int keyvalue;
+  10          int flickerflag=0;
+  11          u8 SegCode[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F};//位选
+  12          u8 duan[6]={0xfe,0xfd,0xfb,0xf7,0xef,0xdf};//段选
+  13          u8 luan[6]={2,3,5,9,5,0};
+  14          void delay(unsigned int t)
+  15          {
+  16   1              for(;t>0;t--);
+  17   1      }
+  18          u8 keyscan(void)//捕获P2
+  19          {
+  20   1              keyvalue=0xff;
+  21   1              if(P2!=0xff)
+  22   1              {
+  23   2                      delay(50);
+  24   2                      if(P2!=0xff)
+  25   2                      {
+  26   3                              keyvalue=P2;
+  27   3                              while ((i<20)&&(P2!=0xff))
+  28   3                              {
+  29   4                                      i++;
+  30   4                                      delay(500);
+  31   4                              }
+  32   3                      }
+  33   2              }
+  34   1              return keyvalue;
+  35   1      }
+  36          void keycontrol (u8 keyvalue)
+  37          {
+  38   1              switch(keyvalue)
+  39   1              {
+  40   2                      case(0xf7)://闪烁
+  41   2                      {
+  42   3                              flickerflag=~flickerflag;
+  43   3                              z=1;
+  44   3                      }
+  45   2                      break;
+  46   2                      case(0xfb):
+  47   2                      {
+  48   3                              z=z+1;
+  49   3                              if(z==7)z=1;
+  50   3                      }
+  51   2                      break;       //               z-1  是当前的值；
+  52   2                      case(0xfd):
+  53   2                      {
+  54   3                              v=0x01;
+C51 COMPILER V9.56.0.0   MAIN                                                              10/08/2017 08:46:35 PAGE 2   
+
+  55   3                              a=z;
+  56   3                              for(;a>1;a--)
+  57   3                              {
+  58   4                                      v=v<<1;
+  59   4                              }
+  60   3                              switch(v)
+  61   3                              {
+  62   4                                      case(0x01):
+  63   4                                      {
+  64   5                                              if((luan[0]==0)||((luan[0]==1)&&(luan[1]<4)))
+  65   5                                              {
+  66   6                                                      luan[0]=luan[0]+1;
+  67   6                                              }
+  68   5                                              else if((luan[0]==1)&&(luan[1]>=4))
+  69   5                                              {
+  70   6                                                      luan[0]=2;
+  71   6                                                      luan[1]=3;
+  72   6                                              }
+  73   5                                              else if((luan[0]==2)&&(luan[3]==3))
+  74   5                                              {
+  75   6                                                      luan[0]=luan[1]=0;
+  76   6                                              }
+  77   5                                      }
+  78   4                                              break;
+  79   4                                      case(0x02):
+  80   4                                              if((luan[0]==0)||(luan[0]==1))
+  81   4                                              {
+  82   5                                                      if(luan[1]<9)
+  83   5                                                      {
+  84   6                                                              luan[1]=luan[1]+1;
+  85   6                                                      }
+  86   5                                                      else if(luan[1]==9)
+  87   5                                                      {
+  88   6                                                              luan[1]=0;
+  89   6                                                      }
+  90   5                                              }
+  91   4                                              else if(luan[0]==2)
+  92   4                                              {
+  93   5                                                      if(luan[1]<3)
+  94   5                                                      {
+  95   6                                                              luan[1]=luan[1]+1;
+  96   6                                                      }
+  97   5                                                      else if(luan[1]==3)
+  98   5                                                      {
+  99   6                                                              luan[0]=luan[1]=0;
+ 100   6                                                      }
+ 101   5                                              }
+ 102   4                                              break;
+ 103   4                                      case(0x04):
+ 104   4                                              if((luan[2]>=0)&&(luan[2]<=4))
+ 105   4                                              {
+ 106   5                                                      luan[2]=luan[2]+1;
+ 107   5                                              }
+ 108   4                                              else if(luan[2]==5)
+ 109   4                                              {
+ 110   5                                                      luan[2]=0;
+ 111   5                                              }
+ 112   4                                              break;
+ 113   4                                      case(0x08):
+ 114   4                                              if(luan[3]<9)
+ 115   4                                              {
+ 116   5                                                      luan[3]=luan[3]+1;
+C51 COMPILER V9.56.0.0   MAIN                                                              10/08/2017 08:46:35 PAGE 3   
+
+ 117   5                                              }
+ 118   4                                              else if((luan[3]==9))
+ 119   4                                              {
+ 120   5                                                      luan[3]=0;
+ 121   5                                              }
+ 122   4                                              else if((luan[3]==9)&&luan[2]==5)
+ 123   4                                              {
+ 124   5                                                      luan[2]=0;
+ 125   5                                                      luan[3]=0;
+ 126   5                                              }
+ 127   4                                              break;
+ 128   4                                      case(0x10):
+ 129   4                                              if((luan[4]>=0)&&(luan[4]<=4))
+ 130   4                                              {
+ 131   5                                                      luan[4]=luan[4]+1;
+ 132   5                                              }
+ 133   4                                              else if(luan[4]==5)
+ 134   4                                              {
+ 135   5                                                      luan[4]=0;
+ 136   5                                              }
+ 137   4                                              break;
+ 138   4                                      case(0x20):
+ 139   4                                              if(luan[5]<9)
+ 140   4                                              {
+ 141   5                                                      luan[5]=luan[5]+1;
+ 142   5                                              }
+ 143   4                                              else if((luan[5]==9))
+ 144   4                                              {
+ 145   5                                                      luan[5]=0;
+ 146   5                                              }
+ 147   4                                              else if((luan[5]==9)&&luan[4]==5)
+ 148   4                                              {
+ 149   5                                                      luan[4]=0;
+ 150   5                                                      luan[5]=0;
+ 151   5                                              }
+ 152   4                                              break;
+ 153   4                              }
+ 154   3                      }
+ 155   2                      break;
+ 156   2                      case(0xfe):
+ 157   2                      {
+ 158   3                              v=0x01;
+ 159   3                              a=z;
+ 160   3                              for(;a>1;a--)
+ 161   3                              {
+ 162   4                                      v=v<<1;
+ 163   4                              }
+ 164   3                              switch(v)
+ 165   3                              {
+ 166   4                                      case(0x01):
+ 167   4                                      {
+ 168   5                                              if((luan[0]==0))
+ 169   5                                              {
+ 170   6                                                      luan[0]=2;
+ 171   6                                              }
+ 172   5                                              else if((luan[0]<3)&&(luan>0))
+ 173   5                                              {
+ 174   6                                                      luan[0]=luan[0]-1;
+ 175   6                                              }
+ 176   5                                      }
+ 177   4                                              break;
+ 178   4                                      case(0x02):
+C51 COMPILER V9.56.0.0   MAIN                                                              10/08/2017 08:46:35 PAGE 4   
+
+ 179   4                                              if((luan[1]<=9)&&(luan[1]!=0))
+ 180   4                                              {
+ 181   5                                                      luan[1]=luan[1]-1;
+ 182   5                                              }
+ 183   4                                              else if(luan[1]==0)
+ 184   4                                              {
+ 185   5                                                      luan[1]=9;
+ 186   5                                              }
+ 187   4                                              break;
+ 188   4                                      case(0x04):
+ 189   4                                              if((luan[2]<=5)&&(luan[2]!=0))
+ 190   4                                              {
+ 191   5                                                      luan[2]=luan[2]-1;
+ 192   5                                              }
+ 193   4                                              else if(luan[2]==0)
+ 194   4                                              {
+ 195   5                                                      luan[2]=5;
+ 196   5                                              }
+ 197   4                                              break;
+ 198   4                                      case(0x08):
+ 199   4                                              if((luan[3]<=9)&&(luan[3]!=0))
+ 200   4                                              {
+ 201   5                                                      luan[3]=luan[3]-1;
+ 202   5                                              }
+ 203   4                                              else if((luan[3]==0))
+ 204   4                                              {
+ 205   5                                                      luan[3]=9;
+ 206   5                                              }
+ 207   4                                              break;
+ 208   4                                      case(0x10):
+ 209   4                                              if((luan[4]<=5)&&(luan[4]!=0))
+ 210   4                                              {
+ 211   5                                                      luan[4]=luan[4]-1;
+ 212   5                                              }
+ 213   4                                              else if(luan[4]==0)
+ 214   4                                              {
+ 215   5                                                      luan[4]=5;
+ 216   5                                              }
+ 217   4                                              break;
+ 218   4                                              break;
+ 219   4                                      case(0x20):
+ 220   4                                              if((luan[5]<=9)&&(luan[5]!=0))
+ 221   4                                              {
+ 222   5                                                      luan[5]=luan[5]-1;
+ 223   5                                              }
+ 224   4                                              else if((luan[5]==0))
+ 225   4                                              {
+ 226   5                                                      luan[5]=9;
+ 227   5                                              }
+ 228   4                                              break;
+ 229   4                              }
+ 230   3                      }
+ 231   2                      break;
+ 232   2              }
+ 233   1      }
+ 234          int main()
+ 235          {
+ 236   1              TMOD=0x01;
+ 237   1              TH0=0x0b;
+ 238   1              TL0=0xdc;
+ 239   1              IE=0xff;
+ 240   1              TR0=1;
+C51 COMPILER V9.56.0.0   MAIN                                                              10/08/2017 08:46:35 PAGE 5   
+
+ 241   1              IT0=1;
+ 242   1              while(1)
+ 243   1              {
+ 244   2                      if(flickerflag!=0)
+ 245   2                      {TR0=0;}
+ 246   2                      if(flickerflag==0)
+ 247   2                      {TR0=1;}
+ 248   2                      for(m=1;m<11;m++)
+ 249   2                      {
+ 250   3                              for(a=1;a<7;a++)
+ 251   3                              {
+ 252   4                                      P1=duan[a-1];
+ 253   4                                       if(a==2||a==4)
+ 254   4                                      {
+ 255   5                                              P0=SegCode[luan[a-1]]|0x80;
+ 256   5                                      }
+ 257   4                                      else 
+ 258   4                                              P0=SegCode[luan[a-1]];
+ 259   4                                      delay(50);
+ 260   4                              }
+ 261   3                      }
+ 262   2                      if(flickerflag!=0)
+ 263   2                      {
+ 264   3                              for(m=1;m<11;m++)
+ 265   3                              {
+ 266   4                                      for(a=1;a<7;a++)
+ 267   4                                      {
+ 268   5                                            if(a==z)
+ 269   5                                            {
+ 270   6                                                    P1=0xff;
+ 271   6                                                    delay(50);
+ 272   6                                            }
+ 273   5                                            else
+ 274   5                                            {
+ 275   6                                              P1=duan[a-1];
+ 276   6                                               if(a==2||a==4)
+ 277   6                                              {
+ 278   7                                                      P0=SegCode[luan[a-1]]|0x80;
+ 279   7                                              }
+ 280   6                                              else 
+ 281   6                                                      P0=SegCode[luan[a-1]];
+ 282   6                                              delay(500);
+ 283   6                                              }
+ 284   5                                      }
+ 285   4                              }
+ 286   3                      }
+ 287   2              }
+ 288   1      }
+ 289          void INT0_IRQHander() interrupt 0
+ 290          {
+ 291   1              keycontrol(keyscan()); 
+ 292   1      }
+ 293          void T1_hander() interrupt 1
+ 294          {
+ 295   1              TR0=0;
+ 296   1              TH0=0x0b;
+ 297   1              TL0=0xdc;
+ 298   1              TR0=1;
+ 299   1              y++;
+ 300   1              if(y>=16)
+ 301   1              {
+ 302   2                      y=0;
+C51 COMPILER V9.56.0.0   MAIN                                                              10/08/2017 08:46:35 PAGE 6   
+
+ 303   2                      if(luan[5]<9)
+ 304   2                      {
+ 305   3                              luan[5]++;
+ 306   3                      }
+ 307   2                      else if((luan[4]<5)&&(luan[5]==9))
+ 308   2                      {
+ 309   3                              luan[4]++;
+ 310   3                              luan[5]=0;
+ 311   3                      }
+ 312   2                      else if((luan[3]<9)&&(luan[4]==5)&&(luan[5]==9))
+ 313   2                      {
+ 314   3                              luan[3]++;
+ 315   3                              luan[4]=luan[5]=0;
+ 316   3                      }
+ 317   2                      else if((luan[2]<5)&&(luan[3]==9)&&(luan[4]==5)&&(luan[5]==9))
+ 318   2                      {
+ 319   3                              luan[2]++;
+ 320   3                              luan[3]=luan[4]=luan[5]=0;
+ 321   3                      }
+ 322   2                      else if((luan[0]<2)&&(luan[1]<9)&&(luan[2]==5)&&(luan[3]==9)&&(luan[4]==5)&&(luan[5]==9))
+ 323   2                      {
+ 324   3                              luan[1]++;
+ 325   3                              luan[2]=luan[3]=luan[4]=luan[5]=0;
+ 326   3                      }
+ 327   2                      else if((luan[0]<2)&&(luan[1]==9)&&(luan[2]==5)&&(luan[3]==9)&&(luan[4]==5)&&(luan[5]==9))
+ 328   2                      {
+ 329   3                              luan[0]++;
+ 330   3                              luan[1]=luan[2]=luan[3]=luan[4]=luan[5]=0;
+ 331   3                      }
+ 332   2                      else if((luan[0]==2)&&(luan[1]<3)&&(luan[2]==5)&&(luan[3]==9)&&(luan[4]==5)&&(luan[5]==9))
+ 333   2                      {
+ 334   3                              luan[1]++;
+ 335   3                              luan[2]=luan[3]=luan[4]=luan[5]=0;
+ 336   3                      }
+ 337   2                      else if((luan[0]==2)&&(luan[1]==3)&&(luan[2]==5)&&(luan[3]==9)&&(luan[4]==5)&&(luan[5]==9)
+             -)
+ 338   2                      {
+ 339   3                              luan[0]=luan[1]=luan[2]=luan[3]=luan[4]=luan[5]=0;
+ 340   3                      }
+ 341   2              }
+ 342   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1356    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     38    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

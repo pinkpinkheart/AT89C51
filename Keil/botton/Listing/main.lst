@@ -1,0 +1,42 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              10/01/2017 18:14:16 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN ..\Output\main.obj
+COMPILER INVOKED BY: d:\Keil_v5\C51\BIN\C51.EXE ..\User\main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\User) DEBUG OBJECTEXTE
+                    -ND PRINT(..\Listing\main.lst) TABS(2) OBJECT(..\Output\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          int main()
+   3          {
+   4   1        int i;
+   5   1        switch(P2)
+   6   1        {
+   7   2          case(0x7f):for(i=1000;i>0;i--);P0=~P2^P0;while (P2==0x7f);break;
+   8   2          case(0xbf):for(i=1000;i>0;i--);P0=~P2^P0;while (P2==0xbf);break;
+   9   2          case(0xdf):for(i=1000;i>0;i--);P0=~P2^P0;while (P2==0xdf);break;
+  10   2          case(0xef):for(i=1000;i>0;i--);P0=~P2^P0;while (P2==0xef);break; 
+  11   2          case(0xf7):for(i=1000;i>0;i--);P0=~P2^P0;while (P2==0xf7);break;
+  12   2          case(0xfb):for(i=1000;i>0;i--);P0=~P2^P0;while (P2==0xfb);break;
+  13   2          case(0xfd):for(i=1000;i>0;i--);P0=~P2^P0;while (P2==0xfd);break;
+  14   2          case(0xfe):for(i=1000;i>0;i--);P0=~P2^P0;while (P2==0xfe);break;
+  15   2          
+  16   2        }
+  17   1        return 0;
+  18   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    267    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
